@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>复合请求</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #ffebee;
+            font-family: 'Arial', sans-serif;
+            overflow: hidden;
+            touch-action: manipulation;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+
+        .container {
+            text-align: center;
+            position: relative;
+        }
+
+        .cat-container {
+            position: relative;
+            width: 300px;
+            height: 300px;
+            margin: 0 auto;
+        }
+
+        .cat {
+            width: 200px;
+            height: 200px;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="45" fill="%23ffcc80"/><circle cx="35" cy="40" r="5" fill="%23633b0e"/><circle cx="65" cy="40" r="5" fill="%23633b0e"/><path d="M40 60 Q50 70 60 60" stroke="%23633b0e" stroke-width="2" fill="none"/><path d="M25 25 Q20 10 10 15" stroke="%23633b0e" stroke-width="2" fill="none"/><path d="M75 25 Q80 10 90 15" stroke="%23633b0e" stroke-width="2" fill="none"/></svg>');
+            background-size: contain;
+            background-repeat: no-repeat;
+            position: absolute;
+            top: 50px;
+            left: 50px;
+            animation: wobble 2s infinite;
+        }
+
+        .sign {
+            width: 120px;
+            height: 80px;
+            background-color: white;
+            border: 2px solid #ff8a80;
+            border-radius: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: absolute;
+            top: -20px;
+            right: 0;
+            transform: rotate(10deg);
+            box-shadow: 3px 3px 5px rgba(0,0,0,0.2);
+            font-size: 16px;
+            font-weight: bold;
+            color: #d32f2f;
+            animation: float 3s infinite ease-in-out;
+        }
+
+        .tear {
+            width: 5px;
+            height: 15px;
+            background-color: #80d8ff;
+            border-radius: 0 0 5px 5px;
+            position: absolute;
+            top: 70px;
+            left: 45px;
+            opacity: 0;
+            animation: tearDrop 3s infinite;
+        }
+
+        .tear:nth-child(2) {
+            left: 55px;
+            animation-delay: 0.5s;
+        }
+
+        .options {
+            margin-top: 40px;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .option {
+            padding: 15px 30px;
+            border-radius: 25px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        #yes {
+            background-color: #81c784;
+            color: white;
+            border: none;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        #no {
+            background-color: #e57373;
+            color: white;
+            border: none;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            position: relative;
+        }
+
+        #no:after {
+            content: "这个不行！求求啦～";
+            position: absolute;
+            top: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #ffcdd2;
+            padding: 3px 8px;
+            border-radius: 10px;
+            font-size: 12px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        #no:hover:after {
+            opacity: 1;
+        }
+
+        @keyframes wobble {
+            0%, 100% { transform: rotate(-2deg); }
+            50% { transform: rotate(2deg); }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(10deg); }
+            50% { transform: translateY(-10px) rotate(15deg); }
+        }
+
+        @keyframes tearDrop {
+            0% { transform: translateY(0); opacity: 0; }
+            10% { opacity: 1; }
+            100% { transform: translateY(30px); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="cat-container">
+            <div class="cat"></div>
+            <div class="tear"></div>
+            <div class="tear"></div>
+            <div class="sign">请求复合</div>
+        </div>
+
+        <div class="options">
+            <button id="yes" class="option">和好</button>
+            <button id="no" class="option">不要</button>
+        </div>
+    </div>
+
+    <audio id="bgMusic" loop>
+        <!-- 这里应该替换为蓝心羽版《小宇》的实际音频文件 -->
+        <source src="https://music.163.com/song/media/outer/url?id=1824045033.mp3" type="audio/mpeg">
+        您的浏览器不支持音频元素。
+    </audio>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const yesBtn = document.getElementById('yes');
+            const noBtn = document.getElementById('no');
+            const bgMusic = document.getElementById('bgMusic');
+
+            // 尝试自动播放音乐（注意：许多浏览器会阻止自动播放）
+            bgMusic.volume = 0.5;
+            const playPromise = bgMusic.play();
+
+            if (playPromise !== undefined) {
+                playPromise.catch(error => {
+                    console.log('自动播放被阻止，请用户交互后播放');
+                });
+            }
+
+            // 点击"不要"按钮的效果
+            noBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+
+                // 让"和好"按钮变大
+                const currentSize = parseFloat(window.getComputedStyle(yesBtn).fontSize);
+                yesBtn.style.fontSize = (currentSize + 2) + 'px';
+
+                // 让"和好"按钮跳动
+                yesBtn.style.transform = 'scale(1.1)';
+                setTimeout(() => {
+                    yesBtn.style.transform = 'scale(1)';
+                }, 300);
+
+                // 显示提示
+                const tooltip = noBtn.querySelector(':after');
+                if (tooltip) {
+                    tooltip.style.opacity = '1';
+                    setTimeout(() => {
+                        tooltip.style.opacity = '0';
+                    }, 1000);
+                }
+            });
+
+            // 点击"和好"按钮的效果
+            yesBtn.addEventListener('click', function() {
+                alert('太好啦！我们和好吧！(｡♥‿♥｡)');
+                bgMusic.pause();
+            });
+
+            // 点击页面任意位置尝试播放音乐（解决自动播放限制）
+            document.body.addEventListener('click', function() {
+                bgMusic.play().catch(e => console.log('播放失败:', e));
+            }, { once: true });
+        });
+    </script>
+</body>
+</html>
