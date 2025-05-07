@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>和好请求</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
+            background: #fff5f7;
+        }
+        #response {
+            margin: 20px 0;
+            min-height: 50px;
+            color: #ff4757;
+        }
+        button {
+            padding: 10px 20px;
+            margin: 0 10px;
+            border: none;
+            border-radius: 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        #yes {
+            background: #4CAF50;
+            color: white;
+        }
+        #no {
+            background: #f44336;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <h2>可以跟我和好吗？</h2>
+    <div id="response"></div>
+    <button id="yes">和好</button>
+    <button id="no">不要</button>
+
+    <script>
+        const msgs = ["对不起，我知道错了", "以后有困难一起解决", "不要欲擒故纵了哦～"];
+        let count = 0;
+
+        yes.onclick = () => {
+            response.innerHTML = '嘿！我就知道啦(>‿◠)✌～<br>宝宝最好了( ˘ ³˘)♥!';
+            yes.style.display = no.style.display = 'none';
+        };
+
+        no.onclick = () => {
+            response.textContent = msgs[count % msgs.length];
+            no.style.fontSize = Math.max(12, parseInt(getComputedStyle(no).fontSize) - 2) + 'px';
+            yes.style.fontSize = parseInt(getComputedStyle(yes).fontSize) + 2 + 'px';
+            count++;
+        };
+    </script>
+</body>
+</html>
