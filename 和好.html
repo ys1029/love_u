@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>复合请求</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-family: 'Arial', sans-serif;
+            overflow: hidden;
+            touch-action: manipulation;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            user-select: none;
+            background-color: #ffebee;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><path fill="%23ffcdd2" d="M30,50 Q50,30 70,50 Q50,70 30,50" opacity="0.2"/></svg>');
+            background-size: 100px;
+        }
+
+        .container {
+            text-align: center;
+            position: relative;
+            background-color: rgba(255, 255, 255, 0.85);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            max-width: 90%;
+        }
+
+        .cat-container {
+            position: relative;
+            width: 250px;
+            height: 250px;
+            margin: 0 auto;
+        }
+
+        .cat {
+            width: 100%;
+            height: 100%;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="45" fill="%23ffcc80"/><circle cx="35" cy="40" r="5" fill="%23633b0e"/><circle cx="65" cy="40" r="5" fill="%23633b0e"/><path d="M40 65 Q50 55 60 65" stroke="%23633b0e" stroke-width="2" fill="none" stroke-linecap="round"/><path d="M25 25 Q20 10 10 15" stroke="%23633b0e" stroke-width="2" fill="none"/><path d="M75 25 Q80 10 90 15" stroke="%23633b0e" stroke-width="2" fill="none"/><path d="M45 70 Q50 75 55 70" stroke="%23d32f2f" stroke-width="1" fill="none"/></svg>');
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            animation: wobble 2s infinite;
+        }
+
+        .sign {
+            width: 120px;
+            height: 80px;
+            background-color: white;
+            border: 2px solid #ff8a80;
+            border-radius: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: absolute;
+            top: -10px;
+            right: 10px;
+            transform: rotate(10deg);
+            box-shadow: 3px 3px 5px rgba(0,0,0,0.2);
+            font-size: 16px;
+            font-weight: bold;
+            color: #d32f2f;
+            animation: float 3s infinite ease-in-out;
+        }
+
+        .tear {
+            width: 4px;
+            height: 12px;
+            background-color: %2380d8ff;
+            border-radius: 0 0 4px 4px;
+            position: absolute;
+            top: 55%;
+            left: 42%;
+            opacity: 0;
+            animation: tearDrop 3s infinite;
+        }
+
+        .tear:nth-child(2) {
+            left: 52%;
+            animation-delay: 0.5s;
+        }
+
+        .options {
+            margin-top: 30px;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .option {
+            padding: 12px 25px;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: none;
+            min-width: 80px;
+        }
+
+        #yes {
+            background: linear-gradient(135deg, #81c784, #4caf50);
+            color: white;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        #no {
+            background: linear-gradient(135deg, #e57373, #f44336);
+            color: white;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            position: relative;
+        }
+
+        #no:after {
+            content: "这个不行！求求啦～";
+            position: absolute;
+            top: -35px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #ffcdd2;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 12px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            white-space: nowrap;
+        }
+
+        #no:hover:after {
+            opacity: 1;
+        }
+
+        @keyframes wobble {
+            0%, 100% { transform: rotate(-2deg); }
+            50% { transform: rotate(2deg); }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(10deg); }
+            50% { transform: translateY(-8px) rotate(15deg); }
+        }
+
+        @keyframes tearDrop {
+            0% { transform: translateY(0); opacity: 0; }
+            10% { opacity: 1; }
+            100% { transform: translateY(25px); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="cat-container">
+            <div class="cat"></div>
+            <div class="tear"></div>
+            <div class="tear"></div>
+            <div class="sign">请求复合</div>
+        </div>
+
+        <div class="options">
+            <button id="yes" class="option">和好</button>
+            <button id="no" class="option">不要</button>
+        </div>
+    </div>
+
+    <!-- 蓝心羽《小宇》音频 -->
+    <audio id="bgMusic" loop>
+        <source src="https://music.163.com/song/media/outer/url?id=1824045033.mp3" type="audio/mpeg">
+    </audio>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const yesBtn = document.getElementById('yes');
+            const noBtn = document.getElementById('no');
+            const bgMusic = document.getElementById('bgMusic');
+
+            // 音乐播放函数
+            function playMusic() {
+                bgMusic.volume = 0.5;
+                bgMusic.play().catch(e => {
+                    console.log('需要用户交互后才能播放音乐');
+                    document.body.addEventListener('click', function() {
+                        bgMusic.play();
+                    }, { once: true });
+                });
+            }
+
+            // 初始化音乐
+            playMusic();
+
+            // "不要"按钮点击效果
+            noBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+
+                // "和好"按钮变大
+                const currentSize = parseFloat(window.getComputedStyle(yesBtn).fontSize);
+                yesBtn.style.fontSize = (currentSize + 2) + 'px';
+
+                // 按钮跳动效果
+                yesBtn.style.transform = 'scale(1.1)';
+                setTimeout(() => yesBtn.style.transform = 'scale(1)', 300);
+
+                // 显示提示
+                noBtn.dispatchEvent(new MouseEvent('mouseover'));
+                setTimeout(() => noBtn.dispatchEvent(new MouseEvent('mouseout')), 1000);
+            });
+
+            // "和好"按钮点击效果
+            yesBtn.addEventListener('click', function() {
+                alert('(๑>◡<๑) 太好啦！我们和好吧！');
+                // 心跳动画
+                yesBtn.style.animation = 'heartBeat 0.5s';
+                setTimeout(() => yesBtn.style.animation = '', 500);
+            });
+        });
+    </script>
+</body>
+</html>
