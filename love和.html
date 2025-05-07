@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>请求复合</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: #fff5f7;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><path fill="%23ffb6c1" d="M30,50 Q50,30 70,50 Q50,70 30,50" opacity="0.15"/></svg>');
+            background-size: 80px;
+            overflow: hidden;
+            touch-action: manipulation;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .header {
+            color: #888;
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+
+        .url {
+            color: #ff6b81;
+            font-size: 12px;
+            margin-bottom: 20px;
+            word-break: break-all;
+        }
+
+        .cat-img {
+            width: 150px;
+            height: 150px;
+            margin: 0 auto 15px;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="45" fill="%23ffccbc"/><circle cx="35" cy="40" r="5" fill="%23633b0e"/><circle cx="65" cy="40" r="5" fill="%23633b0e"/><path d="M40 65 Q50 55 60 65" stroke="%23633b0e" stroke-width="2" fill="none" stroke-linecap="round"/><path d="M25 25 Q20 10 10 15" stroke="%23633b0e" stroke-width="2" fill="none"/><path d="M75 25 Q80 10 90 15" stroke="%23633b0e" stroke-width="2" fill="none"/><path d="M45 70 Q50 75 55 70" stroke="%23d32f2f" stroke-width="1" fill="none"/><path d="M40 45 L45 50 L40 55" fill="none" stroke="%2380d8ff" stroke-width="1.5"/><path d="M60 45 L55 50 L60 55" fill="none" stroke="%2380d8ff" stroke-width="1.5"/></svg>');
+            background-size: contain;
+            background-repeat: no-repeat;
+            position: relative;
+        }
+
+        .title {
+            color: #ff4757;
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 25px;
+        }
+
+        .buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .btn {
+            padding: 10px 25px;
+            border-radius: 20px;
+            font-size: 16px;
+            font-weight: bold;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        #btn-yes {
+            background: linear-gradient(135deg, #4cd137, #44bd32);
+            color: white;
+            box-shadow: 0 3px 6px rgba(76, 209, 55, 0.3);
+        }
+
+        #btn-no {
+            background: linear-gradient(135deg, #e84118, #c23616);
+            color: white;
+            box-shadow: 0 3px 6px rgba(232, 65, 24, 0.3);
+            position: relative;
+        }
+
+        #btn-no:after {
+            content: "这个不行！求求啦～";
+            position: absolute;
+            top: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #ffcccc;
+            padding: 3px 10px;
+            border-radius: 10px;
+            font-size: 12px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        #btn-no:hover:after {
+            opacity: 1;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">Digi Wi-Fi | 0:38</div>
+        <div class="url">ys1029.github.io/love_1</div>
+
+        <div class="cat-img"></div>
+        <div class="title">请求复合</div>
+
+        <div class="buttons">
+            <button id="btn-yes" class="btn">和好</button>
+            <button id="btn-no" class="btn">不要</button>
+        </div>
+    </div>
+
+    <!-- 蓝心羽版《小宇》 -->
+    <audio id="bgMusic" loop>
+        <source src="https://music.163.com/song/media/outer/url?id=1824045033.mp3" type="audio/mpeg">
+    </audio>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const btnYes = document.getElementById('btn-yes');
+            const btnNo = document.getElementById('btn-no');
+            const bgMusic = document.getElementById('bgMusic');
+
+            // 设置音乐音量
+            bgMusic.volume = 0.5;
+
+            // 尝试自动播放音乐
+            function playMusic() {
+                bgMusic.play().catch(e => {
+                    // 如果自动播放被阻止，在用户点击时播放
+                    document.body.addEventListener('click', function() {
+                        bgMusic.play();
+                    }, { once: true });
+                });
+            }
+            playMusic();
+
+            // "不要"按钮点击效果
+            btnNo.addEventListener('click', function(e) {
+                e.preventDefault();
+
+                // 让"和好"按钮变大
+                const currentSize = parseFloat(window.getComputedStyle(btnYes).fontSize);
+                btnYes.style.fontSize = (currentSize + 2) + 'px';
+
+                // 显示提示
+                btnNo.dispatchEvent(new MouseEvent('mouseover'));
+                setTimeout(() => btnNo.dispatchEvent(new MouseEvent('mouseout')), 1000);
+            });
+
+            // "和好"按钮点击效果
+            btnYes.addEventListener('click', function() {
+                alert('(´｡• ᵕ •｡`) ♡ 我们和好吧！');
+                btnYes.style.animation = 'pulse 0.5s';
+                setTimeout(() => btnYes.style.animation = '', 500);
+            });
+        });
+    </script>
+</body>
+</html>
