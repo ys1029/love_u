@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>请求复合</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-family: 'Arial Rounded MT Bold', 'Arial', sans-serif;
+            background-color: #fff0f5;
+            overflow: hidden;
+        }
+
+        .container {
+            text-align: center;
+            width: 100%;
+            max-width: 300px;
+        }
+
+        .dog {
+            width: 200px;
+            height: 200px;
+            margin: 0 auto 20px;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path d="M30 50 Q50 20 70 50 Q80 70 50 80 Q20 70 30 50 Z" fill="%23FFB74D"/><circle cx="35" cy="45" r="4" fill="%23333"/><circle cx="65" cy="45" r="4" fill="%23333"/><path d="M40 65 Q50 70 60 65" stroke="%23333" stroke-width="2" fill="none"/><path d="M25 30 Q15 20 10 25" stroke="%23333" stroke-width="2" fill="none"/><path d="M75 30 Q85 20 90 25" stroke="%23333" stroke-width="2" fill="none"/><path d="M40 50 L35 55 L40 60" stroke="%2300B0FF" stroke-width="1.5" fill="none"/><path d="M60 50 L65 55 L60 60" stroke="%2300B0FF" stroke-width="1.5" fill="none"/></svg>');
+            background-size: contain;
+            background-repeat: no-repeat;
+            position: relative;
+            animation: wobble 3s infinite;
+        }
+
+        .tear {
+            position: absolute;
+            width: 4px;
+            height: 12px;
+            background-color: %2300B0FF;
+            border-radius: 0 0 4px 4px;
+            opacity: 0;
+        }
+
+        .tear.left {
+            left: 38%;
+            top: 55%;
+            animation: tearDrop 2s infinite;
+        }
+
+        .tear.right {
+            left: 58%;
+            top: 55%;
+            animation: tearDrop 2s infinite 0.5s;
+        }
+
+        .title {
+            color: #E91E63;
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 30px;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .btn {
+            padding: 12px 25px;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: bold;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        #btn-yes {
+            background: linear-gradient(135deg, #4CAF50, #2E7D32);
+            color: white;
+            box-shadow: 0 4px 8px rgba(76, 175, 80, 0.3);
+        }
+
+        #btn-no {
+            background: linear-gradient(135deg, #F44336, #C62828);
+            color: white;
+            box-shadow: 0 4px 8px rgba(244, 67, 54, 0.3);
+            position: relative;
+        }
+
+        #btn-no:after {
+            content: "这个不行！求求啦～";
+            position: absolute;
+            top: -35px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #FFCDD2;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 12px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        @keyframes wobble {
+            0%, 100% { transform: rotate(-2deg); }
+            50% { transform: rotate(2deg); }
+        }
+
+        @keyframes tearDrop {
+            0% { transform: translateY(0); opacity: 0; }
+            20% { opacity: 1; }
+            100% { transform: translateY(30px); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="dog">
+            <div class="tear left"></div>
+            <div class="tear right"></div>
+        </div>
+        <div class="title">请求复合</div>
+
+        <div class="buttons">
+            <button id="btn-yes" class="btn">和好</button>
+            <button id="btn-no" class="btn">不要</button>
+        </div>
+    </div>
+
+    <!-- 林俊杰《将故事写成我们》 -->
+    <audio id="bgMusic" loop>
+        <source src="https://music.163.com/song/media/outer/url?id=1372796496.mp3" type="audio/mpeg">
+    </audio>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const btnYes = document.getElementById('btn-yes');
+            const btnNo = document.getElementById('btn-no');
+            const bgMusic = document.getElementById('bgMusic');
+
+            // 设置音乐音量
+            bgMusic.volume = 0.5;
+
+            // 尝试自动播放音乐
+            function playMusic() {
+                bgMusic.play().catch(e => {
+                    // 添加点击播放提示
+                    const hint = document.createElement('div');
+                    hint.textContent = '点击屏幕播放音乐';
+                    hint.style.position = 'fixed';
+                    hint.style.top = '20px';
+                    hint.style.left = '0';
+                    hint.style.right = '0';
+                    hint.style.textAlign = 'center';
+                    hint.style.color = '#E91E63';
+                    hint.style.fontWeight = 'bold';
+                    document.body.appendChild(hint);
+
+                    document.body.addEventListener('click', function() {
+                        bgMusic.play();
+                        hint.remove();
+                    }, { once: true });
+                });
+            }
+            playMusic();
+
+            // "不要"按钮点击效果
+            btnNo.addEventListener('click', function(e) {
+                e.preventDefault();
+
+                // 显示提示
+                btnNo.dispatchEvent(new MouseEvent('mouseover'));
+                setTimeout(() => {
+                    btnNo.dispatchEvent(new MouseEvent('mouseout'));
+                }, 1000);
+
+                // 让"和好"按钮变大
+                const currentSize = parseFloat(window.getComputedStyle(btnYes).fontSize);
+                btnYes.style.fontSize = (currentSize + 2) + 'px';
+
+                // 跳动效果
+                btnYes.style.transform = 'scale(1.1)';
+                setTimeout(() => {
+                    btnYes.style.transform = 'scale(1)';
+                }, 300);
+            });
+
+            // "和好"按钮点击效果
+            btnYes.addEventListener('click', function() {
+                alert('🐶 我们和好吧！将故事写成我们~');
+                btnYes.style.animation = 'none';
+                void btnYes.offsetWidth;
+                btnYes.style.animation = 'wobble 0.5s';
+            });
+        });
+    </script>
+</body>
+</html>
